@@ -5,9 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/expense_tracker";
+    // ☁️ Railway Cloud MySQL — accessible from any laptop
+    private static final String URL = "jdbc:mysql://tramway.proxy.rlwy.net:53404/railway?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "Mysql@4146"; // Update as necessary
+    private static final String PASSWORD = "TpcVYOcrSzZehBZqTgtBVsVCMjGqwDoq";
 
     private static Connection connection = null;
 
