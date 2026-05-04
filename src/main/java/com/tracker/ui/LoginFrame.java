@@ -254,7 +254,7 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 openDashboard(userId);
             } else {
-                JOptionPane.showMessageDialog(this, "Registration failed. Email might already exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Registration failed. This is likely due to a database connection issue or the email already existing.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 

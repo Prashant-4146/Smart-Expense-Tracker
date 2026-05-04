@@ -59,6 +59,22 @@ public class DashboardFrame extends JFrame {
         titleLabel.setFont(Theme.FONT_TITLE);
         titleLabel.setForeground(Theme.TEXT_PRIMARY);
         headerPanel.add(titleLabel, BorderLayout.WEST);
+
+        JPanel headerActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        headerActions.setOpaque(false);
+        
+        ModernButton headerAddBtn = new ModernButton("Add Expense", Theme.PRIMARY);
+        headerAddBtn.setPreferredSize(new Dimension(160, 40));
+        headerAddBtn.addActionListener(e -> showAddExpenseDialog());
+        
+        ModernButton headerCreditBtn = new ModernButton("Update Credits", Theme.SUCCESS);
+        headerCreditBtn.setPreferredSize(new Dimension(170, 40));
+        headerCreditBtn.addActionListener(e -> showUpdateCreditDialog());
+        
+        headerActions.add(headerCreditBtn);
+        headerActions.add(headerAddBtn);
+        headerPanel.add(headerActions, BorderLayout.EAST);
+        
         add(headerPanel, BorderLayout.NORTH);
 
         JPanel mainContentPanel = new JPanel(new BorderLayout(20, 20));
@@ -68,9 +84,9 @@ public class DashboardFrame extends JFrame {
         JPanel summaryPanel = new JPanel(new GridLayout(1, 3, 20, 0));
         summaryPanel.setOpaque(false);
 
-        totalCreditsLabel = createSummaryCard("Total Credits", "💳", summaryPanel, Theme.PRIMARY);
-        totalExpensesLabel = createSummaryCard("Total Expenses", "📉", summaryPanel, Theme.DANGER);
-        remainingBalanceLabel = createSummaryCard("Remaining Balance", "💰", summaryPanel, Theme.SUCCESS);
+        totalCreditsLabel = createSummaryCard("Total Credits", "", summaryPanel, Theme.PRIMARY);
+        totalExpensesLabel = createSummaryCard("Total Expenses", "", summaryPanel, Theme.DANGER);
+        remainingBalanceLabel = createSummaryCard("Remaining Balance", "", summaryPanel, Theme.SUCCESS);
         
         mainContentPanel.add(summaryPanel, BorderLayout.NORTH);
 
@@ -147,10 +163,23 @@ public class DashboardFrame extends JFrame {
         filterCombo.addActionListener(e -> refreshData());
         sortCombo.addActionListener(e -> refreshData());
         
-        filterBox.add(new JLabel("Filter:"));
+        JLabel filterLabel = new JLabel("Filter:");
+        filterLabel.setForeground(Theme.TEXT_SECONDARY);
+        filterLabel.setFont(Theme.FONT_SMALL);
+        
+        JLabel sortLabel = new JLabel("Sort:");
+        sortLabel.setForeground(Theme.TEXT_SECONDARY);
+        sortLabel.setFont(Theme.FONT_SMALL);
+
+        filterBox.add(filterLabel);
         filterBox.add(filterCombo);
-        filterBox.add(new JLabel("Sort:"));
+        filterBox.add(sortLabel);
         filterBox.add(sortCombo);
+        
+        // Style Combos
+        styleComboBox(filterCombo);
+        styleComboBox(sortCombo);
+        
         topBox.add(filterBox, BorderLayout.EAST);
         
         tableContainer.add(topBox, BorderLayout.NORTH);
@@ -201,10 +230,22 @@ public class DashboardFrame extends JFrame {
 
         JTableHeader header = expenseTable.getTableHeader();
         header.setBackground(Theme.BG_COLOR);
-        header.setForeground(Theme.TEXT_SECONDARY);
-        header.setFont(Theme.FONT_SMALL);
-        header.setBorder(BorderFactory.createEmptyBorder());
-        ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(JLabel.LEFT);
+        header.setForeground(Theme.TEXT_PRIMARY);
+        header.setFont(Theme.FONT_HEADING);
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER_COLOR));
+        
+        // Custom header renderer to ensure dark background and light text
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setBackground(Theme.BG_COLOR);
+                label.setForeground(Theme.TEXT_PRIMARY);
+                label.setFont(Theme.FONT_HEADING);
+                label.setBorder(new EmptyBorder(10, 10, 10, 10));
+                return label;
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(expenseTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -218,13 +259,11 @@ public class DashboardFrame extends JFrame {
         actionPanel.setOpaque(false);
 
         ModernButton updateCreditBtn = new ModernButton("Update Credits", Theme.BORDER_COLOR);
-        ModernButton addBtn = new ModernButton("Add Expense", Theme.PRIMARY);
-        ModernButton deleteBtn = new ModernButton("Delete", Theme.DANGER);
+        ModernButton deleteBtn = new ModernButton("Delete Expense", Theme.DANGER);
         ModernButton printBtn = new ModernButton("Print Report", Theme.SUCCESS);
         ModernButton viewGraphBtn = new ModernButton("View Graph", Theme.PRIMARY);
 
         updateCreditBtn.addActionListener(e -> showUpdateCreditDialog());
-        addBtn.addActionListener(e -> showAddExpenseDialog());
         deleteBtn.addActionListener(e -> deleteSelectedExpense());
         printBtn.addActionListener(e -> printReport());
         viewGraphBtn.addActionListener(e -> showLargeGraph());
@@ -233,7 +272,6 @@ public class DashboardFrame extends JFrame {
         actionPanel.add(deleteBtn);
         actionPanel.add(viewGraphBtn);
         actionPanel.add(printBtn);
-        actionPanel.add(addBtn);
 
         tableContainer.add(actionPanel, BorderLayout.SOUTH);
 
@@ -290,8 +328,11 @@ public class DashboardFrame extends JFrame {
             }
             @Override
             protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
-                g.setColor(isSelected ? Theme.PRIMARY : Theme.TEXT_SECONDARY);
-                super.paintText(g, tabPlacement, font, metrics, tabIndex, title, textRect, isSelected);
+                // Set color BEFORE drawing, and don't let super override it
+                g.setFont(font);
+                g.setColor(isSelected ? Theme.PRIMARY : Theme.TEXT_PRIMARY);
+                int mnt = metrics.getAscent();
+                g.drawString(title, textRect.x, textRect.y + mnt);
             }
             @Override
             protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
@@ -479,7 +520,7 @@ public class DashboardFrame extends JFrame {
         List<String> insights = service.getInsights();
         for (String insight : insights) {
             JLabel lbl = new JLabel("<html><p style='width:300px;'>" + insight + "</p></html>");
-            lbl.setForeground(Theme.TEXT_SECONDARY);
+            lbl.setForeground(Theme.TEXT_PRIMARY);
             lbl.setFont(Theme.FONT_REGULAR);
             lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
             insightsListPanel.add(lbl);
@@ -491,7 +532,7 @@ public class DashboardFrame extends JFrame {
         List<String> stockSuggestions = InvestmentAdvisor.getStockSuggestions(remainingBalance);
         for (String suggestion : stockSuggestions) {
             JLabel lbl = new JLabel("<html><p style='width:300px;'>" + suggestion + "</p></html>");
-            lbl.setForeground(Theme.TEXT_SECONDARY);
+            lbl.setForeground(Theme.TEXT_PRIMARY);
             lbl.setFont(Theme.FONT_REGULAR);
             lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
             stocksListPanel.add(lbl);
@@ -503,7 +544,7 @@ public class DashboardFrame extends JFrame {
         List<String> sipSuggestions = InvestmentAdvisor.getSIPSuggestions(remainingBalance);
         for (String suggestion : sipSuggestions) {
             JLabel lbl = new JLabel("<html><p style='width:300px;'>" + suggestion + "</p></html>");
-            lbl.setForeground(Theme.TEXT_SECONDARY);
+            lbl.setForeground(Theme.TEXT_PRIMARY);
             lbl.setFont(Theme.FONT_REGULAR);
             lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
             sipsListPanel.add(lbl);
@@ -527,6 +568,43 @@ public class DashboardFrame extends JFrame {
             }
         } catch (java.awt.print.PrinterException ex) {
             JOptionPane.showMessageDialog(this, "Printing Failed: " + ex.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void styleComboBox(JComboBox<String> combo) {
+        combo.setBackground(Color.WHITE);
+        combo.setForeground(Color.BLACK);
+        combo.setFont(Theme.FONT_SMALL);
+        combo.setBorder(BorderFactory.createLineBorder(Theme.BORDER_COLOR));
+        
+        // Custom renderer for the dropdown AND the selected item display
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                
+                if (index == -1) {
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK);
+                } else {
+                    label.setBackground(isSelected ? Theme.PRIMARY : Color.WHITE);
+                    label.setForeground(isSelected ? Color.WHITE : Color.BLACK);
+                }
+                
+                label.setBorder(new EmptyBorder(5, 10, 5, 10));
+                label.setOpaque(true);
+                return label;
+            }
+        });
+
+        // Force background for internal components
+        combo.setOpaque(true);
+        for (int i = 0; i < combo.getComponentCount(); i++) {
+            Component c = combo.getComponent(i);
+            c.setBackground(Color.WHITE);
+            if (c instanceof JButton) {
+                ((JButton) c).setBorder(null);
+            }
         }
     }
 

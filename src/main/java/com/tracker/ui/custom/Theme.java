@@ -7,8 +7,8 @@ public class Theme {
     // Dark mode colors
     public static final Color BG_COLOR = new Color(18, 18, 18);
     public static final Color CARD_BG = new Color(30, 30, 30);
-    public static final Color TEXT_PRIMARY = new Color(240, 240, 240);
-    public static final Color TEXT_SECONDARY = new Color(170, 170, 170);
+    public static final Color TEXT_PRIMARY = new Color(250, 250, 250);
+    public static final Color TEXT_SECONDARY = new Color(190, 190, 190);
     
     // Accents
     public static final Color PRIMARY = new Color(0, 122, 255); // Blue

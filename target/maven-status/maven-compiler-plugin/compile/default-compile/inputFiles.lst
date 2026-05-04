@@ -1,24 +1,25 @@
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\LoginFrame.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\model\Expense.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\service\SmartCategorizer.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\custom\Theme.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\service\ExpenseTrackerService.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\custom\ModernScrollBarUI.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\custom\RoundedPanel.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\service\InvestmentAdvisor.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\Main.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\model\Credit.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\model\User.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\dao\ExpenseDAO.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\service\InsightGenerator.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\model\Budget.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\AddExpenseDialog.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\DashboardFrame.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\dao\UserDAO.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\dao\BudgetDAO.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\util\CheckDB.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\util\DBConnection.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\dao\CreditDAO.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\custom\ModernButton.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\ui\ReportPanel.java
-C:\Users\hp\OneDrive\Desktop\java-tracker\src\main\java\com\tracker\util\DBUpdater.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\custom\ModernScrollBarUI.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\util\DBUpdater.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\dao\CreditDAO.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\AddExpenseDialog.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\util\TestConn.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\dao\UserDAO.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\custom\RoundedPanel.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\util\CheckDB.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\custom\ModernButton.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\model\User.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\service\InvestmentAdvisor.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\model\Credit.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\custom\Theme.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\util\DBConnection.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\model\Budget.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\model\Expense.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\LoginFrame.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\dao\ExpenseDAO.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\service\InsightGenerator.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\Main.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\service\SmartCategorizer.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\DashboardFrame.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\dao\BudgetDAO.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\ui\ReportPanel.java
+c:\Users\sanch\Desktop\Smart Expense Tracker\Smart-Expense-Tracker\src\main\java\com\tracker\service\ExpenseTrackerService.java

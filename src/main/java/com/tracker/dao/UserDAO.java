@@ -77,6 +77,10 @@ public class UserDAO {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("Registration failed: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error during registration: " + e.getMessage());
             e.printStackTrace();
         }
         return -1;
