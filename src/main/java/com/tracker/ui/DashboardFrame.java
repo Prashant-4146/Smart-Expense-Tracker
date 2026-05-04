@@ -8,6 +8,7 @@ import com.tracker.ui.custom.ModernButton;
 import com.tracker.ui.custom.ModernScrollBarUI;
 import com.tracker.ui.custom.RoundedPanel;
 import com.tracker.ui.custom.Theme;
+import com.tracker.service.InvestmentAdvisor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +33,8 @@ public class DashboardFrame extends JFrame {
     private JComboBox<String> sortCombo;
     private JProgressBar budgetProgressBar;
     private JPanel insightsListPanel;
+    private JPanel stocksListPanel;
+    private JPanel sipsListPanel;
 
     public DashboardFrame(ExpenseTrackerService service) {
         this.service = service;
@@ -217,13 +220,19 @@ public class DashboardFrame extends JFrame {
         ModernButton updateCreditBtn = new ModernButton("Update Credits", Theme.BORDER_COLOR);
         ModernButton addBtn = new ModernButton("Add Expense", Theme.PRIMARY);
         ModernButton deleteBtn = new ModernButton("Delete", Theme.DANGER);
+        ModernButton printBtn = new ModernButton("Print Report", Theme.SUCCESS);
+        ModernButton viewGraphBtn = new ModernButton("View Graph", Theme.PRIMARY);
 
         updateCreditBtn.addActionListener(e -> showUpdateCreditDialog());
         addBtn.addActionListener(e -> showAddExpenseDialog());
         deleteBtn.addActionListener(e -> deleteSelectedExpense());
+        printBtn.addActionListener(e -> printReport());
+        viewGraphBtn.addActionListener(e -> showLargeGraph());
 
         actionPanel.add(updateCreditBtn);
         actionPanel.add(deleteBtn);
+        actionPanel.add(viewGraphBtn);
+        actionPanel.add(printBtn);
         actionPanel.add(addBtn);
 
         tableContainer.add(actionPanel, BorderLayout.SOUTH);
@@ -270,18 +279,59 @@ public class DashboardFrame extends JFrame {
         
         contentPanel.add(budgetPanel, BorderLayout.NORTH);
 
-        // Insights List
+        // Tabbed Pane for Insights, Stocks, SIPs
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(Theme.FONT_HEADING);
+        tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override
+            protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+                g.setColor(isSelected ? Theme.CARD_BG : Theme.BG_COLOR);
+                g.fillRect(x, y, w, h);
+            }
+            @Override
+            protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
+                g.setColor(isSelected ? Theme.PRIMARY : Theme.TEXT_SECONDARY);
+                super.paintText(g, tabPlacement, font, metrics, tabIndex, title, textRect, isSelected);
+            }
+            @Override
+            protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+                g.setColor(Theme.BORDER_COLOR);
+                g.drawRect(x, y, w, h);
+            }
+            @Override
+            protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
+                // Remove dotted focus border
+            }
+        });
+
+        // Spending Insights
         insightsListPanel = new JPanel();
         insightsListPanel.setLayout(new BoxLayout(insightsListPanel, BoxLayout.Y_AXIS));
-        insightsListPanel.setOpaque(false);
-        
-        JScrollPane scrollPane = new JScrollPane(insightsListPanel);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setBackground(Theme.CARD_BG);
-        scrollPane.getViewport().setBackground(Theme.CARD_BG);
-        scrollPane.getVerticalScrollBar().setUI(new ModernScrollBarUI());
-        
-        contentPanel.add(scrollPane, BorderLayout.CENTER);
+        insightsListPanel.setBackground(Theme.CARD_BG);
+        JScrollPane insightsScroll = new JScrollPane(insightsListPanel);
+        insightsScroll.setBorder(BorderFactory.createEmptyBorder());
+        insightsScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        tabbedPane.addTab("Insights", insightsScroll);
+
+        // Stocks
+        stocksListPanel = new JPanel();
+        stocksListPanel.setLayout(new BoxLayout(stocksListPanel, BoxLayout.Y_AXIS));
+        stocksListPanel.setBackground(Theme.CARD_BG);
+        JScrollPane stocksScroll = new JScrollPane(stocksListPanel);
+        stocksScroll.setBorder(BorderFactory.createEmptyBorder());
+        stocksScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        tabbedPane.addTab("Stocks", stocksScroll);
+
+        // SIPs
+        sipsListPanel = new JPanel();
+        sipsListPanel.setLayout(new BoxLayout(sipsListPanel, BoxLayout.Y_AXIS));
+        sipsListPanel.setBackground(Theme.CARD_BG);
+        JScrollPane sipsScroll = new JScrollPane(sipsListPanel);
+        sipsScroll.setBorder(BorderFactory.createEmptyBorder());
+        sipsScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        tabbedPane.addTab("SIPs", sipsScroll);
+
+        contentPanel.add(tabbedPane, BorderLayout.CENTER);
 
         panel.add(contentPanel, BorderLayout.CENTER);
         return panel;
@@ -312,6 +362,15 @@ public class DashboardFrame extends JFrame {
             Expense newExpense = dialog.getExpense();
             service.addExpense(newExpense);
             refreshData();
+            
+            Credit credit = service.getCredit();
+            double totalCredits = credit != null ? credit.getTotalAmount() : 0.0;
+            if (service.getTotalExpenses() > totalCredits) {
+                JOptionPane.showMessageDialog(this, 
+                    "Alert: Your total expenses have exceeded your total credits!", 
+                    "Budget Exceeded", 
+                    JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 
@@ -361,6 +420,7 @@ public class DashboardFrame extends JFrame {
         remainingBalanceLabel.setText(String.format("₹%.2f", remainingBalance));
 
         if (remainingBalance < 0) {
+            remainingBalanceLabel.setText("⚠️ " + String.format("₹%.2f", remainingBalance));
             remainingBalanceLabel.setForeground(Theme.DANGER);
         } else {
             remainingBalanceLabel.setForeground(Theme.SUCCESS);
@@ -427,9 +487,55 @@ public class DashboardFrame extends JFrame {
         insightsListPanel.revalidate();
         insightsListPanel.repaint();
 
+        stocksListPanel.removeAll();
+        List<String> stockSuggestions = InvestmentAdvisor.getStockSuggestions(remainingBalance);
+        for (String suggestion : stockSuggestions) {
+            JLabel lbl = new JLabel("<html><p style='width:300px;'>" + suggestion + "</p></html>");
+            lbl.setForeground(Theme.TEXT_SECONDARY);
+            lbl.setFont(Theme.FONT_REGULAR);
+            lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+            stocksListPanel.add(lbl);
+        }
+        stocksListPanel.revalidate();
+        stocksListPanel.repaint();
+
+        sipsListPanel.removeAll();
+        List<String> sipSuggestions = InvestmentAdvisor.getSIPSuggestions(remainingBalance);
+        for (String suggestion : sipSuggestions) {
+            JLabel lbl = new JLabel("<html><p style='width:300px;'>" + suggestion + "</p></html>");
+            lbl.setForeground(Theme.TEXT_SECONDARY);
+            lbl.setFont(Theme.FONT_REGULAR);
+            lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+            sipsListPanel.add(lbl);
+        }
+        sipsListPanel.revalidate();
+        sipsListPanel.repaint();
+
         // Update charts
         if (reportPanel != null) {
             reportPanel.refreshCharts();
         }
+    }
+
+    private void printReport() {
+        try {
+            java.text.MessageFormat header = new java.text.MessageFormat("Expense Report");
+            java.text.MessageFormat footer = new java.text.MessageFormat("Page {0}");
+            boolean complete = expenseTable.print(JTable.PrintMode.FIT_WIDTH, header, footer);
+            if (complete) {
+                JOptionPane.showMessageDialog(this, "Printing Completed", "Print", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (java.awt.print.PrinterException ex) {
+            JOptionPane.showMessageDialog(this, "Printing Failed: " + ex.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void showLargeGraph() {
+        JDialog dialog = new JDialog(this, "Financial Trend Details", true);
+        dialog.setSize(900, 600);
+        dialog.setLocationRelativeTo(this);
+        ReportPanel largePanel = new ReportPanel(service);
+        dialog.add(largePanel);
+        dialog.setVisible(true);
     }
 }

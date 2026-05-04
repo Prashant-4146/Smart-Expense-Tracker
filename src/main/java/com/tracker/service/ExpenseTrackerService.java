@@ -113,6 +113,6 @@ public class ExpenseTrackerService {
     }
     
     public List<String> getInsights() {
-        return InsightGenerator.generateInsights(getAllExpenses(), getBudget());
+        return InsightGenerator.generateInsights(getAllExpenses(), getBudget(), getCredit());
     }
 }
